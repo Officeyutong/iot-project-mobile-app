@@ -8,7 +8,7 @@ import { Card, Dialog } from 'react-native-elements';
 import React from 'react';
 import { accelerometer, gravity, gyroscope, orientation } from 'react-native-sensors';
 import Geolocation from '@react-native-community/geolocation';
-
+import CompassHeading from 'react-native-compass-heading';
 enum State {
     Loading,
     Loaded,
@@ -122,7 +122,18 @@ const MainView: React.FC<{}> = () => {
 
     }, [sendData, state]);
     useEffect(() => {
-        if (state !== State.Loaded) {
+        if (state === State.Loaded) {
+            CompassHeading.start(3, (heading) => {
+                sendData({
+                    Compass: heading,
+                });
+            });
+            return () => CompassHeading.stop();
+        }
+    }, [sendData, state]);
+    useEffect(() => {
+        if (state === State.Loaded) {
+            console.log('Watching position...');
             const handle = Geolocation.watchPosition(resp => {
                 sendData({
                     Geolocation: resp,
@@ -138,7 +149,6 @@ const MainView: React.FC<{}> = () => {
         }
     }, [sendData, state]);
     return <View>
-
         <Dialog isVisible={state === State.Loading}>
             <Dialog.Loading />
         </Dialog>

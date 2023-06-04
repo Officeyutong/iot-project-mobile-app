@@ -50,7 +50,7 @@ const LoginView: React.FC<{}> = () => {
         />
 
         <Button
-          title="登录"
+          title="连接"
           onPress={handleLogin}
         />
       </View>
